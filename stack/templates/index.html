@@ -1,0 +1,82 @@
+{%extends 'base.html'%}
+{%block body_block%}
+<div class="col-md-10 col-lg-8 col-xl-7">
+  <!-- Post preview-->
+  <div class="post-preview">
+    <form action="" method="post" enctype="multipart/form-data">
+      {%csrf_token%}
+      {{form.as_p}}
+      <input type="submit" value="POST" class="btn btn-sm btn-success">
+
+    </form>
+
+  </div>
+  <!-- Divider-->
+  <hr class="my-4" />
+  <!-- Post preview-->
+  {% for q in questions%}
+  <div class="col-md-10 col-lg-8 col-xl-7">
+    <!-- Post preview-->
+    <div class="post-preview">
+      <a href="post.html">
+        {%if q.image%}
+        <a href=""><img src="{{q.image.url}}" alt="" class="card-img-top"></a>
+        {%endif%}
+        <h2 class="post-title">{{q.question}}</h2>
+        <h3 class="post-subtitle"></h3>
+      </a>
+      <p class="post-meta">
+        Posted by
+        <a href="#!">{{q.user}}</a>
+        on {{q.created_date}}
+      <div>
+        <p>
+          <button class="btn btn-info" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapseExample{{ forloop.counter }}" aria-expanded="false"
+            aria-controls="collapseExample">
+            Add your answer
+          </button>
+          <button class="btn btn-info" type="button" data-bs-toggle="collapse"
+            data-bs-target="#answerlist{{ forloop.counter }}" aria-expanded="false" aria-controls="collapseExample">
+            Answers
+          </button>
+        </p>
+        <div class="collapse" id="collapseExample{{ forloop.counter}}">
+          <div class="card card-body">
+            <form action="{%url 'add-answer' q.id %}" method="post">
+              {%csrf_token%}
+              <textarea name="answer" id="" cols="30" rows="3" class="form-control"></textarea>
+              <input type="submit" value="add" class="mt-2 btn btn-sm btn-success">
+            </form>
+          </div>
+        </div>
+        <div class="collapse" id="answerlist{{ forloop.counter}}">
+          <div class="card card-body">
+            <ul class="list-group">
+              {%for ans in q.fetch_answers%}
+              <li class="list-group-item">
+                <a href="{% url 'upvote' ans.id %}" class="btn btn-sm btn-success">Upvote</a>
+                {{ans.up_vote.all.count}} <span class="text-success">upvote</span>
+                {{ans.answer}}
+              </li>
+              {%endfor%}
+            </ul>
+          </div>
+        </div>
+      </div>
+      </p>
+    </div>
+    <!-- Divider-->
+    <hr class="my-4" />
+    <!-- Post preview-->
+
+
+  </div>
+
+  {%endfor%}
+
+
+</div>
+
+
+{%endblock%}
